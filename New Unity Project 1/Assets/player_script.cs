@@ -13,11 +13,11 @@ public class player_script : MonoBehaviour {
 	public int maxJumpCount = 2;
 	int currentJumpCount = 0;
 
-	public Vector2 startPosition;
+	Vector2 startPosition;
 
 	// Use this for initialization
 	void Start () {
-	
+		startPosition = transform.position;
 	}
 	
 	// Update is called once per frame
