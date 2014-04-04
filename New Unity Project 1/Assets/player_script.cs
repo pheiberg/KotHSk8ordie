@@ -109,7 +109,7 @@ public class player_script : MonoBehaviour {
 	}
 
 	void OnCollisionEnter2D(Collision2D other){
-		bool collisionWithOtherPlayer = other.gameObject.name == "Player";
+		bool collisionWithOtherPlayer = other.gameObject.name == "Player" && isPlaying;// && other.gameObject.GetComponent<player_script>().isPlaying;
 		GamePad.SetVibration ((PlayerIndex)PlayerId, collisionWithOtherPlayer ? 1 : 0, 0);
 
 		if (collisionWithOtherPlayer) {
