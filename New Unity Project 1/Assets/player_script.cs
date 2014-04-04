@@ -11,6 +11,7 @@ public class player_script : MonoBehaviour {
 	public int PlayerId;
 	public int Deaths = 0;
 	GameObject[] spawnPoints;
+	public GUIStyle textStyle;
 
 	public int maxJumpCount = 2;
 	int currentJumpCount = 0;
@@ -19,10 +20,34 @@ public class player_script : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		SetTextStyle ();
 		startPosition = transform.position;
 		spawnPoints = GameObject.FindGameObjectsWithTag("Spawn");
 	}
-	
+
+	void SetTextStyle()
+	{
+		textStyle = new GUIStyle ();
+		textStyle.normal.textColor = Color.black;
+		textStyle.fontSize = 20;
+		textStyle.fontStyle = FontStyle.Bold;
+
+		switch(PlayerId){
+			case 1:
+				textStyle.alignment = TextAnchor.UpperRight;
+				break;
+			case 2:
+				textStyle.alignment = TextAnchor.LowerLeft;
+				break;
+			case 3:
+				textStyle.alignment = TextAnchor.LowerRight;
+				break;
+			default:
+				textStyle.alignment = TextAnchor.UpperLeft;
+				break;
+		}
+	}
+
 	// Update is called once per frame
 	void Update () {
 		prevState = state;
@@ -86,7 +111,7 @@ public class player_script : MonoBehaviour {
 
 	void OnGUI()
 	{
-		GUI.Label (new Rect(0f + (Screen.width - 150f) * PlayerId, 0f, 150f, 40f), "Player" + (PlayerId + 1) + " deaths: " + Deaths);
+		GUI.Label (new Rect(10f, 10f, Screen.width - 20f, Screen.height - 20f), "Player" + (PlayerId + 1) + " deaths: " + Deaths, textStyle);
 		//RenderPlayerInfo ();
 	}
 
