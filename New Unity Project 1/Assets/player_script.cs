@@ -9,6 +9,9 @@ public class player_script : MonoBehaviour {
 	GamePadState prevState;
 	public Vector2 _speed = new Vector2(2,2);
 	public bool isFacingRight = true;
+	public int PlayerId;
+
+	public Vector2 startPosition;
 
 	// Use this for initialization
 	void Start () {
@@ -19,23 +22,23 @@ public class player_script : MonoBehaviour {
 	void Update () {
 		// Find a PlayerIndex, for a single player game
 		// Will find the first controller that is connected ans use it
-		if (!playerIndexSet || !prevState.IsConnected)
-		{
-			for (int i = 0; i < 4; ++i)
-			{
-				PlayerIndex testPlayerIndex = (PlayerIndex)i;
-				GamePadState testState = GamePad.GetState(testPlayerIndex);
-				if (testState.IsConnected)
-				{
-					Debug.Log(string.Format("GamePad found {0}", testPlayerIndex));
-					playerIndex = testPlayerIndex;
-					playerIndexSet = true;
-				}
-			}
-		}
+//		if (!playerIndexSet || !prevState.IsConnected)
+//		{
+//			for (int i = 0; i < 4; ++i)
+//			{
+//				PlayerIndex testPlayerIndex = (PlayerIndex)i;
+//				GamePadState testState = GamePad.GetState(testPlayerIndex);
+//				if (testState.IsConnected)
+//				{
+//					Debug.Log(string.Format("GamePad found {0}", testPlayerIndex));
+//					playerIndex = testPlayerIndex;
+//					playerIndexSet = true;
+//				}
+//			}
+//		}
 
 		prevState = state;
-		state = GamePad.GetState(playerIndex);
+		state = GamePad.GetState((PlayerIndex)(PlayerId - 1));
 		
 		var xxbox = state.ThumbSticks.Left.X;
 		float x = xxbox;// Input.GetAxis ("Horizontal");
@@ -49,12 +52,20 @@ public class player_script : MonoBehaviour {
 			rigidbody2D.AddForce(new Vector2(0, 200));
 		}
 
+		if(prevState.Buttons.Start == ButtonState.Released && state.Buttons.Start == ButtonState.Pressed) {
+			ResetGame();
+		}
+
 		if (movement.x > 0 && !isFacingRight) {
 			Flip (1);
 		}
 		else if (movement.x < 0 && isFacingRight) {
 			Flip(-1);
 		}
+	}
+
+	void ResetGame(){
+		transform.position = startPosition;
 	}
 
 	void Flip(float direction)
@@ -65,7 +76,7 @@ public class player_script : MonoBehaviour {
 
 	void OnGUI()
 	{
-		string text = "Use left stick to turn the cube, hold A to change color\n";
+		string text = "Player info\n";
 		text += string.Format("IsConnected {0} Packet #{1}\n", state.IsConnected, state.PacketNumber);
 		text += string.Format("\tTriggers {0} {1}\n", state.Triggers.Left, state.Triggers.Right);
 		text += string.Format("\tD-Pad {0} {1} {2} {3}\n", state.DPad.Up, state.DPad.Right, state.DPad.Down, state.DPad.Left);
