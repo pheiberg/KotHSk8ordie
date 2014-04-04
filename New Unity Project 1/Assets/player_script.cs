@@ -36,7 +36,7 @@ public class player_script : MonoBehaviour {
 		}
 
 		if(prevState.Buttons.Start == ButtonState.Released && state.Buttons.Start == ButtonState.Pressed) {
-			ResetPlayer();
+			PlayerDied();
 		}
 
 		rigidbody2D.AddTorque ((prevState.Triggers.Left - prevState.Triggers.Right) * .7f);
@@ -49,8 +49,7 @@ public class player_script : MonoBehaviour {
 		}
 
 		if (transform.position.y < -2f) {
-			Deaths++;
-			ResetPlayer();
+			PlayerDied();
 		}
 	}
 
@@ -61,6 +60,11 @@ public class player_script : MonoBehaviour {
 		if (other.gameObject.name == "Ground") {
 			currentJumpCount = 0;
 		}
+	}
+
+	void PlayerDied(){
+		Deaths++;
+		ResetPlayer();
 	}
 
 	void ResetPlayer(){
