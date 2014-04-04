@@ -13,10 +13,15 @@ public class player_script : MonoBehaviour {
 	GameObject[] spawnPoints;
 	public GUIStyle textStyle;
 
+	bool isPlaying = false;
+
 	public int maxJumpCount = 2;
 	int currentJumpCount = 0;
 
 	Vector2 startPosition;
+
+
+	bool RenderText{get{return isPlaying && renderer.enabled;}}
 
 	// Use this for initialization
 	void Start () {
@@ -50,8 +55,19 @@ public class player_script : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+
 		prevState = state;
 		state = GamePad.GetState((PlayerIndex)(PlayerId));
+
+		if(prevState.Buttons.Start == ButtonState.Released && state.Buttons.Start == ButtonState.Pressed) {
+			isPlaying = !isPlaying;
+			Restart();
+		}
+
+		renderer.enabled = isPlaying;
+
+		if (!isPlaying)
+			return;
 
 		var movement = new Vector2 (_speed.x * state.ThumbSticks.Left.X, 0);
 		
@@ -63,9 +79,11 @@ public class player_script : MonoBehaviour {
 			currentJumpCount++;
 		}
 
-		if(prevState.Buttons.Start == ButtonState.Released && state.Buttons.Start == ButtonState.Pressed) {
+		if(prevState.Buttons.Back == ButtonState.Released && state.Buttons.Back == ButtonState.Pressed) {
 			PlayerDied();
 		}
+
+
 
 		rigidbody2D.AddTorque ((prevState.Triggers.Left - prevState.Triggers.Right) * .7f);
 
@@ -79,6 +97,12 @@ public class player_script : MonoBehaviour {
 		if (transform.position.y < -2f) {
 			PlayerDied();
 		}
+	}
+
+	void Restart()
+	{
+		Deaths = 0;
+		ResetPlayer ();
 	}
 
 	void OnCollisionEnter2D(Collision2D other){
@@ -111,7 +135,8 @@ public class player_script : MonoBehaviour {
 
 	void OnGUI()
 	{
-		GUI.Label (new Rect(10f, 10f, Screen.width - 20f, Screen.height - 20f), "Player" + (PlayerId + 1) + " deaths: " + Deaths, textStyle);
+		if(RenderText)
+			GUI.Label (new Rect(10f, 10f, Screen.width - 20f, Screen.height - 20f), "Player" + (PlayerId + 1) + " deaths: " + Deaths, textStyle);
 		//RenderPlayerInfo ();
 	}
 
