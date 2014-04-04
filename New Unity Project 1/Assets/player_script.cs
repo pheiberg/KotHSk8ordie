@@ -10,6 +10,9 @@ public class player_script : MonoBehaviour {
 	public int PlayerId;
 	public int Deaths = 0;
 
+	public int maxJumpCount = 2;
+	int currentJumpCount = 0;
+
 	public Vector2 startPosition;
 
 	// Use this for initialization
@@ -27,8 +30,9 @@ public class player_script : MonoBehaviour {
 		movement *= Time.deltaTime;
 		transform.Translate (movement);
 
-		if(prevState.Buttons.A == ButtonState.Released && state.Buttons.A == ButtonState.Pressed || Input.GetButtonDown ("Jump")) {
+		if(currentJumpCount < maxJumpCount && (prevState.Buttons.A == ButtonState.Released && state.Buttons.A == ButtonState.Pressed || Input.GetButtonDown ("Jump"))) {
 			rigidbody2D.AddForce(new Vector2(0, 200));
+			currentJumpCount++;
 		}
 
 		if(prevState.Buttons.Start == ButtonState.Released && state.Buttons.Start == ButtonState.Pressed) {
@@ -54,6 +58,9 @@ public class player_script : MonoBehaviour {
 		bool vibrate = other.gameObject.name == "Player";
 		GamePad.SetVibration ((PlayerIndex)PlayerId, vibrate ? 1 : 0, 0);
 
+		if (other.gameObject.name == "Ground") {
+			currentJumpCount = 0;
+		}
 	}
 
 	void ResetPlayer(){
