@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using XInputDotNetPure;
+using System;
 
 public class player_script : MonoBehaviour {
 	GamePadState state;
@@ -9,6 +10,7 @@ public class player_script : MonoBehaviour {
 	public bool isFacingRight = true;
 	public int PlayerId;
 	public int Deaths = 0;
+	GameObject[] spawnPoints;
 
 	public int maxJumpCount = 2;
 	int currentJumpCount = 0;
@@ -18,6 +20,7 @@ public class player_script : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		startPosition = transform.position;
+		spawnPoints = GameObject.FindGameObjectsWithTag("Spawn");
 	}
 	
 	// Update is called once per frame
@@ -30,7 +33,7 @@ public class player_script : MonoBehaviour {
 		movement *= Time.deltaTime;
 		transform.Translate (movement);
 
-		if(currentJumpCount < maxJumpCount && (prevState.Buttons.A == ButtonState.Released && state.Buttons.A == ButtonState.Pressed || Input.GetButtonDown ("Jump"))) {
+		if(currentJumpCount < maxJumpCount && (prevState.Buttons.A == ButtonState.Released && state.Buttons.A == ButtonState.Pressed)) {
 			rigidbody2D.AddForce(new Vector2(0, 200));
 			currentJumpCount++;
 		}
@@ -68,7 +71,8 @@ public class player_script : MonoBehaviour {
 	}
 
 	void ResetPlayer(){
-		transform.position = startPosition;
+		int spawnId = (int)Math.Floor(UnityEngine.Random.value * spawnPoints.Length);
+		transform.position = spawnPoints [spawnId].transform.position; //startPosition;
 		rigidbody2D.velocity = new Vector2 (0, 0);
 		transform.rotation = new Quaternion ();
 		GamePad.SetVibration ((PlayerIndex)PlayerId, 0, 0);
