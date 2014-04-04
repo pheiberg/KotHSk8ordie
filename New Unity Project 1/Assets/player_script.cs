@@ -5,7 +5,7 @@ using XInputDotNetPure;
 public class player_script : MonoBehaviour {
 	GamePadState state;
 	GamePadState prevState;
-	public Vector2 _speed = new Vector2(2,2);
+	Vector2 _speed = new Vector2(3,2);
 	public bool isFacingRight = true;
 	public int PlayerId;
 	public int Deaths = 0;
