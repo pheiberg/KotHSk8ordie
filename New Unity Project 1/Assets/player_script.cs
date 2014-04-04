@@ -3,8 +3,6 @@ using System.Collections;
 using XInputDotNetPure;
 
 public class player_script : MonoBehaviour {
-	bool playerIndexSet = false;
-	PlayerIndex playerIndex;
 	GamePadState state;
 	GamePadState prevState;
 	public Vector2 _speed = new Vector2(2,2);
@@ -20,26 +18,9 @@ public class player_script : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		// Find a PlayerIndex, for a single player game
-		// Will find the first controller that is connected ans use it
-//		if (!playerIndexSet || !prevState.IsConnected)
-//		{
-//			for (int i = 0; i < 4; ++i)
-//			{
-//				PlayerIndex testPlayerIndex = (PlayerIndex)i;
-//				GamePadState testState = GamePad.GetState(testPlayerIndex);
-//				if (testState.IsConnected)
-//				{
-//					Debug.Log(string.Format("GamePad found {0}", testPlayerIndex));
-//					playerIndex = testPlayerIndex;
-//					playerIndexSet = true;
-//				}
-//			}
-//		}
-
 		prevState = state;
-		state = GamePad.GetState((PlayerIndex)(PlayerId - 1));
-		
+		state = GamePad.GetState((PlayerIndex)(PlayerId));
+
 		var xxbox = state.ThumbSticks.Left.X;
 		float x = xxbox;// Input.GetAxis ("Horizontal");
 		
@@ -64,8 +45,17 @@ public class player_script : MonoBehaviour {
 		}
 	}
 
+	void OnCollisionEnter2D(Collision2D other){
+		bool vibrate = other.gameObject.name == "Player";
+		GamePad.SetVibration ((PlayerIndex)PlayerId, vibrate ? 1 : 0, 0);
+
+	}
+
 	void ResetGame(){
 		transform.position = startPosition;
+		rigidbody2D.velocity = new Vector2 (0, 0);
+		transform.rotation = new Quaternion ();
+
 	}
 
 	void Flip(float direction)
@@ -84,6 +74,6 @@ public class player_script : MonoBehaviour {
 		text += string.Format("\tButtons LeftStick {0} RightStick {1} LeftShoulder {2} RightShoulder {3}\n", state.Buttons.LeftStick, state.Buttons.RightStick, state.Buttons.LeftShoulder, state.Buttons.RightShoulder);
 		text += string.Format("\tButtons A {0} B {1} X {2} Y {3}\n", state.Buttons.A, state.Buttons.B, state.Buttons.X, state.Buttons.Y);
 		text += string.Format("\tSticks Left {0} {1} Right {2} {3}\n", state.ThumbSticks.Left.X, state.ThumbSticks.Left.Y, state.ThumbSticks.Right.X, state.ThumbSticks.Right.Y);
-		GUI.Label(new Rect(0, 0, Screen.width, Screen.height), text);
+		GUI.Label(new Rect(0, 100.0f * PlayerId, Screen.width, Screen.height), text);
 	}
 }
