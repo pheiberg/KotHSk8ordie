@@ -71,6 +71,7 @@ public class player_script : MonoBehaviour {
 		transform.position = startPosition;
 		rigidbody2D.velocity = new Vector2 (0, 0);
 		transform.rotation = new Quaternion ();
+		GamePad.SetVibration ((PlayerIndex)PlayerId, 0, 0);
 	}
 
 	void Flip(float direction)
