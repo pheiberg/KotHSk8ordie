@@ -11,7 +11,8 @@ public class player_script : MonoBehaviour {
 	public int PlayerId;
 	public int Deaths = 0;
 	GameObject[] spawnPoints;
-	public GUIStyle textStyle;
+	GUIStyle textStyle;
+	public AudioClip[] sounds;
 
 	bool isPlaying = false;
 
@@ -25,6 +26,7 @@ public class player_script : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
 		SetTextStyle ();
 		startPosition = transform.position;
 		spawnPoints = GameObject.FindGameObjectsWithTag("Spawn");
@@ -75,6 +77,7 @@ public class player_script : MonoBehaviour {
 		transform.Translate (movement);
 
 		if(currentJumpCount < maxJumpCount && (prevState.Buttons.A == ButtonState.Released && state.Buttons.A == ButtonState.Pressed)) {
+			GameObject.FindGameObjectWithTag ("AudioPlayerJump").gameObject.audio.Play();
 			rigidbody2D.AddForce(new Vector2(0, 200));
 			currentJumpCount++;
 		}
@@ -106,8 +109,12 @@ public class player_script : MonoBehaviour {
 	}
 
 	void OnCollisionEnter2D(Collision2D other){
-		bool vibrate = other.gameObject.name == "Player";
-		GamePad.SetVibration ((PlayerIndex)PlayerId, vibrate ? 1 : 0, 0);
+		bool collisionWithOtherPlayer = other.gameObject.name == "Player";
+		GamePad.SetVibration ((PlayerIndex)PlayerId, collisionWithOtherPlayer ? 1 : 0, 0);
+
+		if (collisionWithOtherPlayer) {
+			GameObject.FindGameObjectWithTag ("AudioPlayerHit").gameObject.audio.Play();	
+		}
 
 		if (other.gameObject.name == "Ground") {
 			currentJumpCount = 0;
@@ -115,6 +122,7 @@ public class player_script : MonoBehaviour {
 	}
 
 	void PlayerDied(){
+		GameObject.FindGameObjectWithTag ("AudioPlayerDeath").gameObject.audio.Play();
 		Deaths++;
 		ResetPlayer();
 	}
